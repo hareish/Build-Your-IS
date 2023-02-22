@@ -1,0 +1,40 @@
+version: "3"
+services:
+  db:
+    # restart: always
+    image: yobasystems/alpine-mariadb:10.4.17 # SPECIFIC IMAGE FOR ARM SOC COMPATIBILITY
+    container_name: db
+    environment:
+      MYSQL_DATABASE: DB
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
+    ports: 
+      - 3306:3306
+    volumes:
+      - persistent:/var/lib/mysql
+    expose:
+      - "3306"
+    networks:
+      - project-api
+
+  phpmyadmin:
+    # restart: always
+    container_name: pma
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+      # - UPLOAD_LIMIT=1G #NEEDED FOR BIG SQL IMPORTS
+    networks:
+      - project-api
+
+
+networks:
+  project-api:
+    driver: "bridge"
+
+volumes:
+  persistent:
